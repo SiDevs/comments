@@ -10,7 +10,7 @@ namespace CommentApi.Models
         public string Id { get; set; }
 
         [BsonElement("Name")]
-        public string BookName { get; set; }
+        public string CommentName { get; set; }
 
         [BsonElement("IsPublic")]
         public string IsPublic { get; set; }

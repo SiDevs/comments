@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using CommentApi.Models;
+using CommentApi.Services;
 
 namespace CommentApi
 {
@@ -20,6 +21,7 @@ namespace CommentApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddScoped<CommentService>();
             services.AddDbContext<CommentContext>(opt =>
                 opt.UseInMemoryDatabase("CommentList"));
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);

@@ -13,7 +13,7 @@ namespace CommentApi.Services
         public CommentService(IConfiguration config)
         {
             var client = new MongoClient(config.GetConnectionString("CommentstoreDb"));
-            var database = client.GetDatabase("CommentstoreDB");
+            var database = client.GetDatabase("CommentstoreDb");
             _comments = database.GetCollection<CommentItem>("Comments");
         }
 

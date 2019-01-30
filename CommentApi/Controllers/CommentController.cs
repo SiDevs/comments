@@ -1,9 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using CommentApi.Models;
+using CommentApi.Services;
+using Microsoft.AspNetCore.Mvc;
 
 namespace CommentApi.Controllers
 {
@@ -11,34 +9,25 @@ namespace CommentApi.Controllers
     [ApiController]
     public class CommentController : ControllerBase
     {
-        private readonly CommentContext _context;
+        private readonly CommentService _commentService;
 
-        public CommentController(CommentContext context)
+        public CommentController(CommentService commentService)
         {
-            _context = context;
-
-            if (_context.CommentItems.Count() == 0)
-            {
-                // Create a new CommentItem if collection is empty,
-                // which means you can't delete all comments.
-                _context.CommentItems.Add(new CommentItem { Name = "Comment1", IsPublic = true });
-
-                _context.SaveChanges();
-            }
+            _commentService = commentService;
         }
 
         // GET: api/Comment             **READ**
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<CommentItem>>> GetCommentItem()
+        public ActionResult<List<CommentItem>> GetCommentItem()
         {
-            return await _context.CommentItems.ToListAsync();
+            return _commentService.Get();
         }
 
         // GET: api/Comment/5           **READ**
-        [HttpGet("{id}")]
-        public async Task<ActionResult<CommentItem>> GetCommentItem(long id)
+        [HttpGet("{id:length(24)}", Name = "GetComment")]
+        public ActionResult<CommentItem> GetCommentItem(string id)
         {
-            var commentItem = await _context.CommentItems.FindAsync(id);  // CommentItems is the collection in the db
+            var commentItem = _commentService.Get(id);
 
             if (commentItem == null)
             {
@@ -51,43 +40,42 @@ namespace CommentApi.Controllers
 
         // POST: api/Comment            **CREATE**
         [HttpPost]
-        public async Task<ActionResult<CommentItem>> PostCommentItem(CommentItem item)
+        public ActionResult<CommentItem> Create(CommentItem comment)
         {
-            _context.CommentItems.Add(item);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction(nameof(GetCommentItem), new { id = item.Id }, item);
+            _commentService.Create(comment);
+            
+            return CreatedAtRoute("GetComment", new { id = comment.Id.ToString() }, comment);
         }
 
         // PUT: api/Comment/5           **UPDATE**
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutCommentItem(long id, CommentItem item)
+        [HttpPut("{id:length(24)}")]
+        public IActionResult Update(string id, CommentItem commentIn)
         {
-            if (id != item.Id)  
+            var commentItem = _commentService.Get(id);
+
+            if (commentItem == null)  
             {
-                return BadRequest();
+                return NotFound();
             }
 
-            _context.Entry(item).State = EntityState.Modified;
-            await _context.SaveChangesAsync();
+            _commentService.Update(id, commentIn);
 
             return NoContent();
 
         }
 
         // DELETE: api/Comment/5        **DELETE**
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteCommentItem(long id)
+        [HttpDelete("{id:length(24)}")]
+        public IActionResult DeleteCommentItem(string id)
         {
-            var commentItem = await _context.CommentItems.FindAsync(id);
+            var commentItem = _commentService.Get(id);
 
             if (commentItem == null)
             {
                 return NotFound();
             }
 
-            _context.CommentItems.Remove(commentItem);
-            await _context.SaveChangesAsync();
+            _commentService.Remove(commentItem.Id);
 
             return NoContent();
         }
