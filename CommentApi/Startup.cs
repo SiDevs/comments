@@ -1,10 +1,8 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using CommentApi.Models;
 using CommentApi.Services;
 
 namespace CommentApi
@@ -22,8 +20,6 @@ namespace CommentApi
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddScoped<CommentService>();
-            services.AddDbContext<CommentContext>(opt =>
-                opt.UseInMemoryDatabase("CommentList"));
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }
 
