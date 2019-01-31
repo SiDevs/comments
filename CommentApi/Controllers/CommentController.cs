@@ -51,9 +51,9 @@ namespace CommentApi.Controllers
         [HttpPut("{id:length(24)}")]
         public IActionResult Update(string id, CommentItem commentIn)
         {
-            var commentItem = _commentService.Get(id);
+            var comment = _commentService.Get(id);
 
-            if (commentItem == null)  
+            if (comment == null)  
             {
                 return NotFound();
             }

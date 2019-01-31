@@ -36,7 +36,7 @@ function getData() {
                             $("<input/>", {
                                 type: "checkbox",
                                 disabled: true,
-                                checked: item.isPublic
+                                checked: (item.isPublic == "true")
                             })
                         )
                     )
@@ -67,8 +67,8 @@ function getData() {
 function addItem() {
     const item = {
         name: $("#add-name").val(),
-        isPublic: false
-    };
+        isPublic: true
+        };
 
     $.ajax({
         type: "POST",
@@ -101,7 +101,7 @@ function editItem(id) {
         if (item.id === id) {
             $("#edit-name").val(item.name);
             $("#edit-id").val(item.id);
-            $("#edit-isPublic")[0].checked = item.isPublic;
+            $("#edit-isPublic")[0].checked = (item.isPublic == "true");
         }
     });
     $("#spoiler").css({ display: "block" });
